@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: nginx:latest
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "80:80"
+
+  backend:
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/usr/src/myapp
+    ports:
+      - "8000:8000"
+    environment:
+      DB_HOST: "host.docker.internal" # Service name for the MySQL container
+      DB_PORT: "3306"
+      DB_NAME: "mlops"
+      DB_USER: "mysql91"
+      DB_PASSWORD: "*killmenow*"
+    depends_on:
+      - database
+
+  database:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: "*killmenow*"
+      MYSQL_DATABASE: "mlops"
+    ports:
+      - "3307:3306"
